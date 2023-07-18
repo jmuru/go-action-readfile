@@ -24,13 +24,38 @@ action scripts easily.
 package main
 
 import (
-	"flag"
-	"log"
+  "flag"
+  "fmt"
+  "io/ioutil"
+  "log"
+  "path/filepath"
 )
 
 var who = flag.String("who", "world", "Say hello to who")
 
 func main() {
-	flag.Parse()
-	log.Println("Hello,", *who)
+  flag.Parse()
+  log.Println("Hello,", *who)
+  dir := "_posts"
+
+  fileList, err := ioutil.ReadDir(dir)
+  if err != nil {
+    log.Fatalf("Failed to read directory: %v", err)
+  }
+
+  for _, file := range fileList {
+    if !file.IsDir() {
+      filePath := filepath.Join(dir, file.Name())
+
+      // Read file content
+      content, err := ioutil.ReadFile(filePath)
+      if err != nil {
+        log.Printf("Failed to read file: %v", err)
+        continue
+      }
+
+      // Process the file content
+      fmt.Printf("File Name: %s\nContent:\n%s\n", file.Name(), content)
+    }
+  }
 }
