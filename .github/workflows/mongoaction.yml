@@ -11,4 +11,4 @@ jobs:
           node-version: '14'
       - run: npm install mongodb
       - run: |
-          npm run save-content
+          npm run save_content
