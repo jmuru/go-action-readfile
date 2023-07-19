@@ -1,28 +1,25 @@
-const uri = "mongodb+srv://josephmuruguru:yRSHnTn0jSf66Ls4@blog-content.rqepisu.mongodb.net/blog-content";
+const mongoose = require('mongoose');
+
+
 const username = "josephmuruguru";
+const password = "yRSHnTn0jSf66Ls4";
+const host = "blog-content.rqepisu.mongodb.net";
+const database="blog-content";
+const uriA = `mongodb+srv://${username}:${password}@blog-content.rqepisu.mongodb.net/blog-content?retryWrites=true&w=majority`;
+const uriB = `mongodb://${username}:${password}@blog-content.rqepisu.mongodb.net/blog-content?retryWrites=true&w=majority`;
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
-
-const client = new MongoClient(uri,  {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: true,
-      deprecationErrors: true,
-    }
-  }
-);
-
-async function run() {
+async function connectToMongoDB(uri) {
+  console.log(uri);
   try {
-    await client.connect();
-    await client.db("blog-content").collection("posts").insertOne(
-      {
-        "Username": username,
-        "Content": blah,
-      }
-    )
-  } finally {
-    await client.close();
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('Connected to MongoDB successfully!');
+  } catch (error) {
+    console.error('Failed to connect to MongoDB:', error);
   }
 }
-run().catch(console.dir);
+// Usage
+const mongoURI = `mongodb://${username}:${password}@${host}:27017/${database}`;
+connectToMongoDB(mongoURI);
