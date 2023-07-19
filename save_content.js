@@ -22,4 +22,4 @@ async function connectToMongoDB(uri) {
 }
 // Usage
 const mongoURI = `mongodb://${username}:${password}@${host}:27017/${database}`;
-connectToMongoDB(mongoURI);
+connectToMongoDB(uriA);
