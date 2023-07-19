@@ -24,38 +24,96 @@ action scripts easily.
 package main
 
 import (
-  "flag"
-  "fmt"
-  "io/ioutil"
-  "log"
-  "path/filepath"
+	"context"
+	"flag"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"path/filepath"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var who = flag.String("who", "world", "Say hello to who")
 
 func main() {
-  flag.Parse()
-  log.Println("Hello,", *who)
-  dir := "_posts"
+	b, _ := findBlogContent()
+	uri := "mongodb+srv://josephmuruguru:yRSHnTn0jSf66Ls4@blog-content.rqepisu.mongodb.net/blog-content" // MongoDB connection URI
+	database := "blog-content"                                                                           // Name of the database
+	collection := "posts"                                                                                // Name of the collection
+	err := WriteStringToMongoDB(uri, database, collection, string(b))
+	if err != nil {
+		fmt.Printf("Failed to write string to MongoDB: %v\n", err)
+		return
+	}
+	fmt.Println("String written to MongoDB successfully!")
+}
 
-  fileList, err := ioutil.ReadDir(dir)
-  if err != nil {
-    log.Fatalf("Failed to read directory: %v", err)
-  }
+func findBlogContent() ([]byte, error) {
+	flag.Parse()
+	log.Println("Hello,", *who)
+	dir := "_posts"
+	var results [][]byte
+	fileList, err := ioutil.ReadDir(dir)
+	if err != nil {
+		log.Fatalf("Failed to read directory: %v", err)
+		return nil, err
+	}
+	for _, file := range fileList {
+		if !file.IsDir() {
+			filePath := filepath.Join(dir, file.Name())
 
-  for _, file := range fileList {
-    if !file.IsDir() {
-      filePath := filepath.Join(dir, file.Name())
+			// Read file content
+			content, err := ioutil.ReadFile(filePath)
+			if err != nil {
+				log.Printf("Failed to read file: %v", err)
+				continue
+			}
 
-      // Read file content
-      content, err := ioutil.ReadFile(filePath)
-      if err != nil {
-        log.Printf("Failed to read file: %v", err)
-        continue
-      }
+			// Process the file content
+			fmt.Printf("File Name: %s\nContent:\n%s\n", file.Name(), content)
+			results = append(results, content)
+		}
+	}
+	return results[0], nil
+}
 
-      // Process the file content
-      fmt.Printf("File Name: %s\nContent:\n%s\n", file.Name(), content)
-    }
-  }
+type bqv struct {
+	BlogContent string `bigquery:"blog_content"`
+}
+
+func WriteStringToMongoDB(uri, database, collection, stringValue string) error {
+	// Create a context
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	// Connect to MongoDB
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	if err != nil {
+		return fmt.Errorf("failed to connect to MongoDB: %v", err)
+	}
+	// Ping the MongoDB server to verify the connection
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to ping MongoDB: %v", err)
+	}
+	// Access the desired collection
+	coll := client.Database(database).Collection(collection)
+	// Create a document
+	document := bson.M{
+		"value": stringValue,
+	}
+	// Insert the document into the collection
+	_, err = coll.InsertOne(ctx, document)
+	if err != nil {
+		return fmt.Errorf("failed to insert document into MongoDB collection: %v", err)
+	}
+	// Disconnect from MongoDB
+	err = client.Disconnect(ctx)
+	if err != nil {
+		log.Printf("failed to disconnect from MongoDB: %v", err)
+	}
+	return nil
 }
