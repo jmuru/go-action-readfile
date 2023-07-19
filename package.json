@@ -1,0 +1,22 @@
+{
+  "name": "go-action-readfile",
+  "version": "1.0.0",
+  "description": "an example of the simplest goaction sctipt.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmuru/go-action-readfile.git"
+  },
+  "author": "Jmuru",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jmuru/go-action-readfile/issues"
+  },
+  "homepage": "https://github.com/jmuru/go-action-readfile#readme",
+  "dependencies": {
+    "mongodb": "^5.7.0"
+  }
+}

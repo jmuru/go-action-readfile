@@ -24,32 +24,18 @@ action scripts easily.
 package main
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"path/filepath"
-	"time"
-
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var who = flag.String("who", "world", "Say hello to who")
 
 func main() {
 	b, _ := findBlogContent()
-	uri := "mongodb+srv://josephmuruguru:yRSHnTn0jSf66Ls4@blog-content.rqepisu.mongodb.net/blog-content" // MongoDB connection URI
-	database := "blog-content"                                                                           // Name of the database
-	collection := "posts"                                                                                // Name of the collection
-	err := WriteStringToMongoDB(uri, database, collection, string(b))
-	if err != nil {
-		fmt.Printf("Failed to write string to MongoDB: %v\n", err)
-		return
-	}
-	fmt.Println("String written to MongoDB successfully!")
+	fmt.Printf(string(b))
 }
 
 func findBlogContent() ([]byte, error) {
@@ -79,41 +65,4 @@ func findBlogContent() ([]byte, error) {
 		}
 	}
 	return results[0], nil
-}
-
-type bqv struct {
-	BlogContent string `bigquery:"blog_content"`
-}
-
-func WriteStringToMongoDB(uri, database, collection, stringValue string) error {
-	// Create a context
-	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Second)
-	defer cancel()
-	// Connect to MongoDB
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
-	if err != nil {
-		return fmt.Errorf("failed to connect to MongoDB: %v", err)
-	}
-	// Ping the MongoDB server to verify the connection
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("failed to ping MongoDB: %v", err)
-	}
-	// Access the desired collection
-	coll := client.Database(database).Collection(collection)
-	// Create a document
-	document := bson.M{
-		"value": stringValue,
-	}
-	// Insert the document into the collection
-	_, err = coll.InsertOne(ctx, document)
-	if err != nil {
-		return fmt.Errorf("failed to insert document into MongoDB collection: %v", err)
-	}
-	// Disconnect from MongoDB
-	err = client.Disconnect(ctx)
-	if err != nil {
-		log.Printf("failed to disconnect from MongoDB: %v", err)
-	}
-	return nil
 }
