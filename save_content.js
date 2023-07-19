@@ -20,7 +20,6 @@ async function connectToMongoDB(uri) {
     await mongoose.connect(uri);
 
     console.log('Connected to MongoDB successfully!');
-    insertRecord('John Doe', 30);
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
   }
