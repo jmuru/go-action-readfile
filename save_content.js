@@ -18,25 +18,9 @@ async function connectToMongoDB(uri) {
   console.log(uri);
   try {
     await mongoose.connect(uri);
-
     console.log('Connected to MongoDB successfully!');
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
-  }
-}
-
-async function insertRecord(name, age) {
-  try {
-    // Create a new record instance
-    const newRecord = new Record({
-      name: name,
-      age: age,
-    });
-    // Save the record to the database
-    await newRecord.save();
-    console.log('Record inserted successfully:', newRecord);
-  } catch (error) {
-    console.error('Failed to insert record:', error);
   }
 }
 
