@@ -9,6 +9,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
+      - run: telnet ac-fv9sve7-shard-00-02.rqepisu.mongodb.net 27017
       - run: npm install mongoose
       - run: |
           npm run save-content
