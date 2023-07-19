@@ -19,6 +19,7 @@ async function connectToMongoDB(uri) {
   try {
     await mongoose.connect(uri);
     console.log('Connected to MongoDB successfully!');
+    await mongoose.connection.close();
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
   }
