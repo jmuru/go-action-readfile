@@ -11,10 +11,7 @@ const uriB = `mongodb://${username}:${password}@blog-content.rqepisu.mongodb.net
 async function connectToMongoDB(uri) {
   console.log(uri);
   try {
-    await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(uri);
     console.log('Connected to MongoDB successfully!');
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
@@ -22,4 +19,4 @@ async function connectToMongoDB(uri) {
 }
 // Usage
 const mongoURI = `mongodb://${username}:${password}@${host}:27017/${database}`;
-connectToMongoDB(uriA);
+connectToMongoDB(mongoURI);
