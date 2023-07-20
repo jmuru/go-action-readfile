@@ -22,7 +22,16 @@ async function connectToMongoDB(uri) {
     await mongoose.connect(uri);
     console.log('Connected to MongoDB successfully!');
     // await BlogContent.db.collection.insertOne({ name: 'test Name', content: "test content" });
-    await mongoose.connection.close();
+    const bc = new User({
+      name: "xyz@example.com",
+      content: "123",
+    });
+    bc.save().then(function (doc) {
+      console.log(doc._id.toString());
+      mongoose.connection.close();
+    }).catch(function (error) {
+      console.log(error);
+    });
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
   }
