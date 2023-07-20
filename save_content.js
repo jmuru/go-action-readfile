@@ -21,7 +21,7 @@ async function connectToMongoDB(uri) {
   try {
     await mongoose.connect(uri);
     console.log('Connected to MongoDB successfully!');
-    await BlogContent.db.collection.insertOne({ name: 'test Name', content: "test content" });
+    // await BlogContent.db.collection.insertOne({ name: 'test Name', content: "test content" });
     await mongoose.connection.close();
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error);
