@@ -22,7 +22,7 @@ async function connectToMongoDB(uri) {
     await mongoose.connect(uri);
     console.log('Connected to MongoDB successfully!');
     // await BlogContent.db.collection.insertOne({ name: 'test Name', content: "test content" });
-    const bc = new User({
+    const bc = new BlogContent({
       name: "xyz@example.com",
       content: "123",
     });
