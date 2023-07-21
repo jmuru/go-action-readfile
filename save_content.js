@@ -61,6 +61,7 @@ function readFilesInDirectory(directoryPath) {
       });
     });
   });
+  console.log(results);
   return results[0];
 }
 // Usage example:
