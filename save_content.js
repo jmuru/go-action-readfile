@@ -64,7 +64,7 @@ function readFilesInDirectory(directoryPath) {
   return results[0];
 }
 // Usage example:
-const directoryPath = '/_posts';
+const directoryPath = './_posts';
 
 function runner() {
   const content = readFilesInDirectory(directoryPath);
