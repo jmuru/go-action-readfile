@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 
 const username = "josephmuruguru";
@@ -16,7 +18,7 @@ const recordSchema = new mongoose.Schema({
 
 const BlogContent = mongoose.model('blog-content', recordSchema);
 
-async function connectToMongoDB(uri) {
+async function connectToMongoDB(uri, content) {
   console.log(uri);
   try {
     await mongoose.connect(uri);
@@ -24,7 +26,7 @@ async function connectToMongoDB(uri) {
     // await BlogContent.db.collection.insertOne({ name: 'test Name', content: "test content" });
     const bc = new BlogContent({
       name: "xyz@example.com",
-      content: "123",
+      content: content,
     });
     bc.save().then(function (doc) {
       console.log(doc._id.toString());
@@ -36,7 +38,38 @@ async function connectToMongoDB(uri) {
     console.error('Failed to connect to MongoDB:', error);
   }
 }
+// connectToMongoDB(uriA);
 
-// Usage
-const mongoURI = `mongodb://${username}:${password}@${host}:27017/${database}`;
-connectToMongoDB(uriA);
+function readFilesInDirectory(directoryPath) {
+  let results = [];
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return;
+    }
+    files.forEach((file) => {
+      const filePath = path.join(directoryPath, file);
+      fs.readFile(filePath, 'utf8', (err, content) => {
+        if (err) {
+          console.error(`Error reading file ${filePath}:`, err);
+          return;
+        }
+        console.log(`Contents of ${filePath}:`);
+        console.log(content);
+        console.log('---');
+        results.push(content)
+      });
+    });
+  });
+  return results[0];
+}
+// Usage example:
+const directoryPath = '/_posts';
+
+function runner() {
+  const content = readFilesInDirectory(directoryPath);
+  connectToMongoDB(uriA, content);
+
+}
+
+runner();
