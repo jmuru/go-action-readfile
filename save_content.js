@@ -40,36 +40,38 @@ async function connectToMongoDB(uri, content) {
 }
 // connectToMongoDB(uriA);
 
-function readFilesInDirectory(directoryPath) {
-  let results = [];
+function readFilesInDirectory(directoryPath, callback) {
   fs.readdir(directoryPath, (err, files) => {
     if (err) {
       console.error('Error reading directory:', err);
       return;
     }
-    files.forEach((file) => {
+    const dataArray = [];
+    files.forEach((file, index) => {
       const filePath = path.join(directoryPath, file);
       fs.readFile(filePath, 'utf8', (err, content) => {
         if (err) {
           console.error(`Error reading file ${filePath}:`, err);
           return;
         }
-        console.log(`Contents of ${filePath}:`);
-        console.log(content);
-        console.log('---');
-        results.push(content)
+        dataArray.push({ fileName: file, content: content });
+        if (index === files.length - 1) {
+          // If it's the last file, invoke the callback with the populated array
+          callback(dataArray);
+        }
       });
     });
   });
-  console.log(results);
-  return results[0];
 }
+
 // Usage example:
 const directoryPath = './_posts';
 
 function runner() {
-  const content = readFilesInDirectory(directoryPath);
-  connectToMongoDB(uriA, content);
+  readFilesInDirectory(directoryPath, (dataArray) => {
+    console.log(dataArray);
+    connectToMongoDB(uriA, dataArray[0].content)
+  });
 
 }
 
