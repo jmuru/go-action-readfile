@@ -20,6 +20,7 @@ const BlogContent = mongoose.model('blog-content', recordSchema);
 
 async function connectToMongoDB(uri, content) {
   console.log(uri);
+  console.log(content);
   try {
     await mongoose.connect(uri);
     console.log('Connected to MongoDB successfully!');
