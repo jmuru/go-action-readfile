@@ -70,7 +70,7 @@ const directoryPath = './_posts';
 function runner() {
   readFilesInDirectory(directoryPath, (dataArray) => {
     console.log(dataArray);
-    connectToMongoDB(mongoHost, dataArray[0].content, dataArray.fileName)
+    connectToMongoDB(mongoHost, dataArray[0].content, dataArray[0].fileName)
   });
 
 }
