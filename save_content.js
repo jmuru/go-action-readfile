@@ -7,8 +7,7 @@ const username = "josephmuruguru";
 const password = "yRSHnTn0jSf66Ls4";
 const host = "blog-content.rqepisu.mongodb.net";
 const database="blog-content";
-const uriA = `mongodb+srv://${username}:${password}@blog-content.rqepisu.mongodb.net/blog-content?retryWrites=true&w=majority`;
-const uriB = `mongodb://${username}:${password}@blog-content.rqepisu.mongodb.net/blog-content?retryWrites=true&w=majority`;
+const mongoHost = `mongodb+srv://${username}:${password}@blog-content.rqepisu.mongodb.net/blog-content?retryWrites=true&w=majority`;
 
 // Define a Mongoose schema for the collection
 const recordSchema = new mongoose.Schema({
@@ -18,15 +17,16 @@ const recordSchema = new mongoose.Schema({
 
 const BlogContent = mongoose.model('blog-content', recordSchema);
 
-async function connectToMongoDB(uri, content) {
+async function connectToMongoDB(uri, content, title) {
   console.log(uri);
   console.log(content);
+  console.log(title);
   try {
     await mongoose.connect(uri);
     console.log('Connected to MongoDB successfully!');
     // await BlogContent.db.collection.insertOne({ name: 'test Name', content: "test content" });
     const bc = new BlogContent({
-      name: "xyz@example.com",
+      name: title,
       content: content,
     });
     bc.save().then(function (doc) {
@@ -39,7 +39,6 @@ async function connectToMongoDB(uri, content) {
     console.error('Failed to connect to MongoDB:', error);
   }
 }
-// connectToMongoDB(uriA);
 
 function readFilesInDirectory(directoryPath, callback) {
   fs.readdir(directoryPath, (err, files) => {
@@ -71,7 +70,7 @@ const directoryPath = './_posts';
 function runner() {
   readFilesInDirectory(directoryPath, (dataArray) => {
     console.log(dataArray);
-    connectToMongoDB(uriA, dataArray[0].content)
+    connectToMongoDB(mongoHost, dataArray[0].content, dataArray.fileName)
   });
 
 }
