@@ -69,7 +69,12 @@ const directoryPath = './_posts';
 
 function runner() {
   readFilesInDirectory(directoryPath, (dataArray) => {
-    console.log(dataArray);
+    // sort the array by date in the file name, given date format is YYYY-MM-DD
+    dataArray.sort((a, b) => {
+      const aDate = a.fileName.substring(0, 10);
+      const bDate = b.fileName.substring(0, 10);
+      return bDate.localeCompare(aDate);
+    });
     connectToMongoDB(mongoHost, dataArray[0].content, dataArray[0].fileName)
   });
 

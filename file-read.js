@@ -24,8 +24,15 @@ function readFilesInDirectory(directoryPath, callback) {
     });
   });
 }
+
 // Usage example:
 const directoryPath = './_posts';
 readFilesInDirectory(directoryPath, (dataArray) => {
-  console.log(dataArray);
+  // sort the array by date in the file name, given date format is YYYY-MM-DD
+  dataArray.sort((a, b) => {
+    const aDate = a.fileName.substring(0, 10);
+    const bDate = b.fileName.substring(0, 10);
+    return bDate.localeCompare(aDate);
+  });
+  console.log("result", dataArray);
 });
